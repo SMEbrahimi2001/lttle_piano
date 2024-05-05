@@ -8,10 +8,6 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # ابعاد صفحه
-Screen_Width = 800
-Screen_Heigth = 300
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 ai_settings = Settings()
 
 border_width = 3
