@@ -110,6 +110,12 @@ while True:
             elif key == 1073741915:  # key 3 numpad
                 mode = 'flute'
                 break
+            elif key == 1073741916:  # key 3 numpad
+                mode = 'xilofono'
+                break
+            elif key == 1073741917:  # key 3 numpad
+                mode = 'xilofono2'
+                break
             #  key modes --> End
         elif event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
