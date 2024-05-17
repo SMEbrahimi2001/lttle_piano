@@ -24,6 +24,37 @@ button_height = ai_settings.Screen_Heigth
 buttons = [(i * button_width, 0, button_width, button_height)
            for i in range(8)]
 
+lesson1Note = [
+    'do', 'do', 're', 'do', 'fa', 'mi', 'do', 'do', 're', 'do', 'so', 'fa', 'do', 'do', 'do2', 'la', 'fa', 'mi', 're', 'la', 'la', 'la', 'fa', 'so', 'fa',    
+    'do', 'do', 're', 'do', 'fa', 'mi', 'do', 'do', 're', 'do', 'so', 'fa', 'do', 'do', 'do2', 'la', 'fa', 'mi', 're', 'la', 'la', 'la', 'fa', 'so', 'fa', 'do', 
+]
+
+
+lesson2Note =  [
+'mi', 'fa', 'so', 'fa', 'so', 'fa', 'so', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'fa', 'so', 'mi','',
+'mi', 'fa', 'so', 'la', 'do', 'si', 'la', 'so', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'la', 'do', 'si', 'la', 'so', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'la', 'si', 'do', '',
+'la','si', 'do', 'la', 'si', 'do', '',
+'do', 're', 'do', 'si', 'la', 'so', 'si', 'si', '',
+'so', 'la', 'si', 'so', 'la', 'si', '',
+'la','si', 'la', 'so', 'si', 'so', 'fa', 'so', 'fa', 'mi', '',
+'la','si', 'la', 'so', 'la', 'so', 'fa', 'so', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+'do', 'si', 'do', 'si', 'do', 're', 'do2', 'do', 'si', 'la', '',
+'si', 'la', 'si', 'so', 'la', 'si', 'si', 'do', 'si', 'la', 'so', '',
+'la','so', 'fa', 'so', 'fa', 'mi', '',
+'la','so', 'fa', 'so', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
+]
+
+count = 0 ;
+
 dictNotes = {
     'do': '1_do',
     're': '2_re',
@@ -56,7 +87,13 @@ class Square:
     def draw(self):
         screen.blit(self.image_default, (self.x, self.y))
 
-        text = self.font.render(self.note[2:], True, self.textColor)
+        if ( lesson2Note[count] == self.note[2:]) :
+            text = self.font.render(f'** {self.note[2:]} **', True, self.textColor)
+        else :
+            text = self.font.render(self.note[2:], True, self.textColor)
+
+
+        
 
         screen.blit(text, (self.x + self.width // 2 - text.get_width() //
                     2, self.y + self.height // 2 - text.get_height() // 2))
@@ -162,4 +199,10 @@ while True:
 
     # آپدیت صفحه
     pygame.display.flip()
+
+    if(lesson2Note[count] != '') : 
+        player.play(lesson2Note[count], mode)
+    count = count + 1
+    pygame.time.delay(300)
+
     clock.tick(30)
