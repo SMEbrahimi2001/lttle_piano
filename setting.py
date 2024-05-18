@@ -1,6 +1,6 @@
 
 class Settings:
-    Screen_Width = 900
-    Screen_Heigth = 300
+    Screen_Width = 850
+    Screen_Heigth = 356
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
