@@ -203,6 +203,6 @@ while True:
     if(lesson2Note[count] != '') : 
         player.play(lesson2Note[count], mode)
     count = count + 1
-    pygame.time.delay(300)
+    pygame.time.delay(500)
 
     clock.tick(30)
