@@ -16,7 +16,7 @@ border_width = 3
 square_size = ai_settings.Screen_Heigth/5.2
 
 # default mode is piano
-modes = ['piano','flute','guitar','xilofono','xilofono2']
+modes = ['piano','guitar','flute','xilofono','xilofono2']
 mode = 'piano'
 
 # نت‌های موسیقی
@@ -261,12 +261,12 @@ while True:
         square.image = square.image_active if square.active else square.image_default
         square.draw()
     
+    if(lesson1Note[count] != '') : 
+        player.play(lesson1Note[count], mode)
+    count = count + 1
+    pygame.time.delay(500)
+
+    clock.tick(30)
     # آپدیت صفحه
     pygame.display.flip()
 
-    # if(lesson1Note[count] != '') : 
-    #     player.play(lesson1Note[count], mode)
-    # count = count + 1
-    # pygame.time.delay(500)
-
-    # clock.tick(30)
