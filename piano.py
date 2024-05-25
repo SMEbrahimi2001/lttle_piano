@@ -1,8 +1,9 @@
 import pygame
+from pygame.locals import *
 import sys
 import os
 
-from setting import Settings
+from setting import Settings 
 # مقداردهی اولیه
 pygame.init()
 clock = pygame.time.Clock()
@@ -12,20 +13,18 @@ ai_settings = Settings()
 
 border_width = 3
 # ابعاد مربع‌ها
-square_size = ai_settings.Screen_Heigth/3.56
+square_size = ai_settings.Screen_Heigth/5.2
 
 # default mode is piano
+modes = ['piano','flute','guitar','xilofono','xilofono2']
 mode = 'piano'
+
 # نت‌های موسیقی
 notes = os.listdir(f"topics/{mode}")
-# دکمه ها
-button_width = ai_settings.Screen_Width // 8
-button_height = ai_settings.Screen_Heigth
-buttons = [(i * button_width, 0, button_width, button_height)
-           for i in range(8)]
+current_note = 'do'
 
 lesson1Note = [
-    'do', 'do', 're', 'do', 'fa', 'mi', 'do', 'do', 're', 'do', 'so', 'fa', 'do', 'do', 'do2', 'la', 'fa', 'mi', 're', 'la', 'la', 'la', 'fa', 'so', 'fa',    
+    'do', 'do', 're','', 'do', 'fa', 'mi', 'do', 'do', 're', 'do', 'so', 'fa', 'do', 'do', 'do2', 'la', 'fa', 'mi', 're', 'la', 'la', 'la', 'fa', 'so', 'fa',    
     'do', 'do', 're', 'do', 'fa', 'mi', 'do', 'do', 're', 'do', 'so', 'fa', 'do', 'do', 'do2', 'la', 'fa', 'mi', 're', 'la', 'la', 'la', 'fa', 'so', 'fa', 'do', 
 ]
 
@@ -53,8 +52,9 @@ lesson2Note =  [
 'mi', 'fa', 'so', 'fa', 'so', 'la', 'fa', 'mi', '',
 ]
 
-count = 0 ;
+count = 0 
 
+#قالب اتصال عبارات به نام فایل ها
 dictNotes = {
     'do': '1_do',
     're': '2_re',
@@ -68,14 +68,12 @@ dictNotes = {
 
 
 # کلاس مربع
-
-
 class Square:
     def __init__(self, x, y, note, image_path):
         self.x = x
         self.y = y
         self.width = square_size
-        self.height = ai_settings.Screen_Heigth
+        self.height = (65/100)*ai_settings.Screen_Heigth
         self.note = note[:-4]  # حذف .wav از اسم فایل
         self.font = pygame.font.Font(None, 24)
         self.image_default = pygame.image.load(image_path)
@@ -84,32 +82,75 @@ class Square:
         self.textColor = ai_settings.BLACK
         self.active = False  # وضعیت اولیه: غیر فعال
 
-    def draw(self):
-        screen.blit(self.image_default, (self.x, self.y))
-
-        if ( lesson2Note[count] == self.note[2:]) :
-            text = self.font.render(f'** {self.note[2:]} **', True, self.textColor)
-        else :
-            text = self.font.render(self.note[2:], True, self.textColor)
-
-
-        
-
-        screen.blit(text, (self.x + self.width // 2 - text.get_width() //
-                    2, self.y + self.height // 2 - text.get_height() // 2))
+    def draw(self,training=False):
+        if(training):
+            # اول ایجاد شی فونت بعدش رندر گرفتن و بعد بلیت
+            # چک کردن نوت فعال 
+            if ( lesson2Note[count] == self.note[2:]) :
+                text = self.font.render(f'** {self.note[2:]} **', True, self.textColor)
+            else :
+                text = self.font.render(self.note[2:], True, self.textColor)
+            screen.blit(self.image_default, (self.x, self.y))
+            # درج متن در وسط مربع ها
+            screen.blit(text, (self.x + self.width // 2 - text.get_width() //
+                        2, self.y + self.height // 2 - text.get_height() // 2))
+        else:
+            if(current_note == str(self.note[2:])):
+                text = self.font.render(f'** {self.note[2:]} **', True, self.textColor)
+            else :
+                text = self.font.render(self.note[2:], True, self.textColor)
+            screen.blit(self.image_default, (self.x, self.y))
+            # درج متن در وسط مربع ها
+            screen.blit(text, (self.x + self.width // 2 - text.get_width() //
+                        2, self.y + self.height // 2 - text.get_height() // 2))
 
     def play(self):
-      
-        
+        # پخش نوت   
         pygame.mixer.Sound(f"topics/{mode}/{self.note}.mp3").play()
         
         
-    def toggle_active(self):
-        if self.active:
-            self.image = self.image_default  # اگر فعال بود، به حالت غیر فعال برگردان
-        else:
-            self.image = self.image_active  # اگر غیر فعال بود، به حالت فعال تغییر بده
-        self.active = not self.active  # تغییر وضعیت
+    # def toggle_active(self,training=False):
+
+
+# کلاس انتخاب
+class Choice:
+    def __init__(self, x, y, width, mode, color):
+        self.x = x + 10
+        self.y = y
+        self.width = width
+        self.height = (34/100)*ai_settings.Screen_Heigth
+        self.mode = mode
+        self.font = pygame.font.Font(None, 24)
+        # self.image_active = pygame.image.load("images/key_selected.png")  # تصویر فعال شده
+        self.color = color
+        self.textColor = ai_settings.BLACK
+        self.active = False  # وضعیت اولیه: غیر فعال
+
+    def draw(self):
+        # blit برای درج تصویر است
+        pygame.draw.rect(screen,self.color,pygame.Rect(self.x,self.y,self.width,self.height),100,30)
+
+        # اول ایجاد شی فونت بعدش رندر گرفتن و بعد بلیت
+        # چک کردن نوت فعال 
+        if ( mode == self.mode) :
+            text = self.font.render(f'** {self.mode} **', True, self.textColor)
+        else :
+            text = self.font.render(self.mode, True, self.textColor)
+
+
+        
+        # درج متن در وسط مربع ها
+        screen.blit(text, (self.x + self.width // 2 - text.get_width() //
+                    2, self.y + self.height // 2 - text.get_height() // 2))
+
+    # def play(self):
+    #     # پخش نوت   
+    #     pygame.mixer.Sound(f"topics/{mode}/{self.note}.mp3").play()
+        
+        
+    def toggle_mode(self):
+        return self.mode
+
 
 
 class player:
@@ -117,13 +158,21 @@ class player:
 
     def play(note, mode):
         print(note)
-        print(dictNotes.get(f'{note}'))
-        pygame.mixer.Sound(f"topics/{mode}/{dictNotes.get(f'{note}')}.mp3").play()
+        # print(dictNotes.get(f'{note}'))
+        pygame.mixer.Sound(f"topics/{mode}/{dictNotes.get(f'{note}')}.mp3").play()  # پخش نوت (توسط تابع سوند یک صدا از روی فایل تولید میشود)
 
-image_paths = ["images/key_do.png", "images/key_re.png", "images/key_mi.png", "images/key_fa.png", "images/key_so.png", "images/key_la.png", "images/key_si.png", "images/key_do2.png"]  # Replace with your image paths
+image_paths = ["images/key_do.png", "images/key_re.png", "images/key_mi.png", "images/key_fa.png", "images/key_so.png", "images/key_la.png", "images/key_si.png", "images/key_do2.png"]  # مسیر عکس نوت ها
+btn_color = ["blue", "red", "green", "yellow", "purple"]
 
-squares = [Square(i * square_size, 0, note, image_path) for i, (note, image_path) in enumerate(zip(notes, image_paths))]
+# انوموریک یک تاپل با مقادیر شمارنده و ایتم بر میگرداند 
+# تابع زیپ دو تا کالکشن یا تاپل رو باهم جوین میکند مثلا ایتم اول یکی با ایتم اول اون یکی و به همین ترتیب
+squares = [Square(i * square_size, (35/100)*ai_settings.Screen_Heigth, note, image_path) for i, (note, image_path) in enumerate(zip(notes, image_paths))]
 
+# دکمه ها
+button_width = ai_settings.Screen_Width // 5.5
+button_height = ai_settings.Screen_Heigth
+buttons = [Choice(i * button_width + i*12, 0, button_width, mode, color)
+           for i, (mode, color) in enumerate(zip(modes, btn_color))]
 
 # ایجاد صفحه
 screen = pygame.display.set_mode(
@@ -131,7 +180,6 @@ screen = pygame.display.set_mode(
 pygame.display.set_caption("پیانو ساده")
 
 
-note_states = {note: False for note in ["do", "re", "mi", "fa", "so", "la", "si", "do2"]}
 
 # حلقه بی‌نهایت
 while True:
@@ -143,27 +191,35 @@ while True:
             key = event.dict.get('key')
             # key notes --> Start
             if key == 49:  # key 1
+                current_note = 'do'
                 player.play('do', mode)
                 print(squares[0].note)
             elif key == 50:  # key 2
+                current_note = 're'
                 player.play('re', mode)
                 print(squares[1].note)
             elif key == 51:  # key 3
+                current_note = 'mi'
                 player.play('mi', mode)
                 print(squares[2].note)
             elif key == 52:  # key 4
+                current_note = 'fa'
                 player.play('fa', mode)
                 print(squares[3].note)
             elif key == 53:  # key 5
+                current_note = 'so'
                 player.play('so', mode)
                 print(squares[4].note)
             elif key == 54:  # key 6
+                current_note = 'la'
                 player.play('la', mode)
                 print(squares[5].note)
             elif key == 55:  # key 7
+                current_note = 'si'
                 player.play('si', mode)
                 print(squares[6].note)
             elif key == 56:  # key 8
+                current_note = 'do2'
                 player.play('do2', mode)
                 print(squares[7].note)
             # key notes --> End
@@ -189,20 +245,28 @@ while True:
             x, y = pygame.mouse.get_pos()
             for square in squares:
                 if square.x < x < square.x + square.width and square.y < y < square.y + square.height:
+                    current_note = str(square.note[2:])
                     square.play()
+            for choice in buttons:
+                if choice.x < x < choice.x + choice.width and choice.y < y < choice.y + choice.height:
+                    mode = choice.toggle_mode()
+
+    screen.fill(ai_settings.WHITE)
+    # نمایش دکمه مود ها  
+    for choice in buttons:
+        choice.draw()
 
     # نمایش عکس ها
-    screen.fill(ai_settings.WHITE)
     for square in squares:
         square.image = square.image_active if square.active else square.image_default
         square.draw()
-
+    
     # آپدیت صفحه
     pygame.display.flip()
 
-    if(lesson2Note[count] != '') : 
-        player.play(lesson2Note[count], mode)
-    count = count + 1
-    pygame.time.delay(500)
+    # if(lesson1Note[count] != '') : 
+    #     player.play(lesson1Note[count], mode)
+    # count = count + 1
+    # pygame.time.delay(500)
 
-    clock.tick(30)
+    # clock.tick(30)
