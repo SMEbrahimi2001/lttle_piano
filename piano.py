@@ -264,8 +264,8 @@ while True:
         square.image = square.image_active if square.active else square.image_default
         square.draw()
 
-    if (lesson1Note[count] != ''):
-        player.play(lesson1Note[count], mode)
+    # if (lesson1Note[count] != ''):
+    #     player.play(lesson1Note[count], mode)
     count = count + 1
     pygame.time.delay(500)
 
